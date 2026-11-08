@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Início · CineVendas</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head><body>
+<header><a class="logo" id="lg"><i></i>CineVendas</a><nav id="nav"></nav></header>
+<main id="app"></main><div id="md"></div>
+<script>var ROOT=''</script>
+<script src="assets/app.js"></script>
+<script>
+function home(){const a=sum('ingresso'),b=sum('bomboniere'),ult=db.vendas.slice(-6).reverse();
+ const d=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+ const art=(bg,c)=>`<div class="art"><svg viewBox="0 0 300 150" preserveAspectRatio="xMidYMid slice"><rect width="300" height="150" fill="${bg}"/>${c}</svg></div>`;
+ $('#app').innerHTML=`<h1>Painel do caixa</h1><p class="sub dt">${d}</p>
+ <div class="kpi"><div><small>Vendas</small><b>${a[0]+b[0]}</b></div><div><small>Ingressos</small><b>${R(a[1])}</b></div><div><small>Bomboniere</small><b>${R(b[1])}</b></div><div><small>Total do dia</small><b>${R(a[1]+b[1])}</b></div></div>
+ <div class="tiles">
+ <a class="tile" href="${L('vendas')}">${art('#00A83B','<circle cx="230" cy="40" r="70" fill="#FFD200"/><path d="M30 150L110 30L190 150z" fill="#0A4DFF"/><rect x="12" y="14" width="34" height="34" fill="#EE1C25"/>')}<div class="tb"><b>Ingressos ${I('arrow')}</b><span class="d">Filmes, sessões, inteira e meia</span></div></a>
+ <a class="tile" href="${L('bomboniere')}">${art('#FFD200','<path d="M0 0A150 150 0 0 1 150 150H0z" fill="#EE1C25"/><circle cx="230" cy="90" r="52" fill="#0A4DFF"/><rect x="170" y="8" width="40" height="40" fill="#00A83B"/>')}<div class="tb"><b>Bomboniere ${I('arrow')}</b><span class="d">Pipoca, bebidas e combos</span></div></a>
+ <a class="tile" href="${L('cadastro')}">${art('#0A4DFF','<path d="M300 150H150A150 150 0 0 1 300 0z" fill="#FFD200"/><circle cx="70" cy="80" r="46" fill="#00A83B"/><rect x="120" y="14" width="34" height="34" fill="#EE1C25"/>')}<div class="tb"><b>Cadastro ${I('arrow')}</b><span class="d">Filmes, preços e itens</span></div></a></div>
+ <h2 class="sh k1">Em cartaz</h2>
+ ${db.filmes.length?`<div class="now">${db.filmes.map(x=>`<a href="${L('vendas')}"><div class="pst">${ph(x)}<span class="cl" data-c="${x.classif}">${CL(x.classif)}</span></div><b>${x.titulo}</b></a>`).join('')}</div>`:'<div class="empty">Nenhum filme cadastrado.</div>'}
+ <h2 class="sh k2">Últimas vendas</h2>
+ ${ult.length?`<div class="tw"><table><thead><tr><th>Nº</th><th>Tipo</th><th>Pagamento</th><th>Valor</th></tr></thead><tbody>${ult.map(v=>`<tr><td class="n">${String(v.n).padStart(4,'0')}</td><td><span class="tg ${v.tipo}">${v.tipo=='ingresso'?'Ingresso':'Bomboniere'}</span></td><td>${v.pay}</td><td class="v">${R(v.total)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Nenhuma venda registrada ainda.</div>'}`}
+
+boot('home',home);
+</script></body></html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ingressos · CineVendas</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head><body>
+<header><a class="logo" id="lg"><i></i>CineVendas</a><nav id="nav"></nav></header>
+<main id="app"></main><div id="md"></div>
+<script>var ROOT='../'</script>
+<script src="../assets/app.js"></script>
+<script>
+function vendas(){const f=db.filmes.find(x=>x.id==V.sel),tot=f?V.i*f.preco+V.m*f.meia:0;
+ $('#app').innerHTML=back+`<h1>Ingressos</h1><p class="sub">Selecione o filme, a sessão e a forma de pagamento.</p>${kpi('ingresso')}<div class="two">
+ ${db.filmes.length?`<div class="grid">${db.filmes.map(x=>`<div class="film ${x.id==V.sel?'sel':''}" onclick="V.sel=${x.id};vendas()"><div class="pst">${ph(x)}<span class="cl" data-c="${x.classif}">${CL(x.classif)}</span></div><div class="ft"><b>${x.titulo}</b><small>${x.dur} min</small></div><div class="pr"><span>Inteira <b>${R(x.preco)}</b></span><span>Meia <b>${R(x.meia)}</b></span></div></div>`).join('')}</div>`:`<div class="empty">Nenhum filme cadastrado.</div>`}
+ <div class="panel"><div class="hd">${I('ticket')}<div><small>Ingresso</small>${f?f.titulo:'Selecione um filme'}</div></div>${f?`
+ <span class="lb" style="margin-top:0">Sessão</span><div class="chips">${['14:00','16:30','19:00','21:30'].map(s=>`<button class="${s==V.sess?'on':''}" onclick="V.sess='${s}';vendas()">${I('clock')}${s}</button>`).join('')}</div>
+ <div class="mu">${f.dur} min · Classificação ${CL(f.classif)}</div>
+ <div class="sep"></div>
+ <div class="row"><div>Inteira<small>${R(f.preco)}</small></div><div class="q"><button onclick="V.i=Math.max(0,V.i-1);vendas()">${I('minus')}</button><span>${V.i}</span><button onclick="V.i++;vendas()">${I('plus')}</button></div></div>
+ <div class="row"><div>Meia-entrada<small>${R(f.meia)}</small></div><div class="q"><button onclick="V.m=Math.max(0,V.m-1);vendas()">${I('minus')}</button><span>${V.m}</span><button onclick="V.m++;vendas()">${I('plus')}</button></div></div>
+ <span class="lb">Pagamento</span>${pays(V.pay,'setVP')}
+ ${V.pay=='Dinheiro'?`<span class="lb">Valor recebido</span><input type="number" min="0" oninput="troco(this.value,${tot})"><div id="tr" class="mu" style="margin-top:6px"></div>`:''}
+ <div class="sep"></div><div class="row"><span class="mu">Total</span><span class="tot">${R(tot)}</span></div><br>
+ <button class="big" ${tot?'':'disabled'} onclick="fimV()">${I('check')} Finalizar venda</button>`:'<p class="mu">Escolha um filme ao lado para começar.</p>'}</div></div>`}
+const setVP=p=>{V.pay=p;vendas()};
+const troco=(v,t)=>{$('#tr').textContent=v?(v>=t?'Troco: '+R(v-t):'Valor insuficiente'):''};
+function fimV(){const f=db.filmes.find(x=>x.id==V.sel),total=V.i*f.preco+V.m*f.meia,l=[f.titulo+' · '+V.sess];
+ if(V.i)l.push(`${V.i}x Inteira · ${R(V.i*f.preco)}`);if(V.m)l.push(`${V.m}x Meia · ${R(V.m*f.meia)}`);
+ recibo('ingresso',l,total,V.pay);V.i=1;V.m=0;vendas()}
+
+
+boot('vendas',vendas);
+</script></body></html>

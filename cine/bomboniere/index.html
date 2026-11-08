@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bomboniere · CineVendas</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head><body>
+<header><a class="logo" id="lg"><i></i>CineVendas</a><nav id="nav"></nav></header>
+<main id="app"></main><div id="md"></div>
+<script>var ROOT='../'</script>
+<script src="../assets/app.js"></script>
+<script>
+function bombo(){const ids=Object.keys(B.cart),tot=ids.reduce((a,id)=>a+B.cart[id]*db.itens.find(x=>x.id==id).preco,0);
+ $('#app').innerHTML=back+`<h1>Bomboniere</h1><p class="sub">Toque no item para adicionar ao pedido.</p>${kpi('bomboniere')}<div class="two">
+ ${db.itens.length?`<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))">${db.itens.map((x,i)=>`<div class="item k${i%4}" onclick="addB(${x.id},1)">${B.cart[x.id]?`<span class="bd">${B.cart[x.id]}</span>`:''}<div class="im">${x.foto?`<img src="${x.foto}" alt="">`:I(x.ic||'popcorn')}</div><b>${x.nome}</b><div class="pp">${R(x.preco)}</div></div>`).join('')}</div>`:'<div class="empty">Nenhum item cadastrado.</div>'}
+ <div class="panel"><div class="hd">${I('popcorn')}<div><small>Bomboniere</small>Pedido</div></div>${ids.length?ids.map(id=>{const x=db.itens.find(y=>y.id==id);return `<div class="row"><div>${x.nome}<small>${R(x.preco*B.cart[id])}</small></div><div class="q"><button onclick="addB(${id},-1)">${I('minus')}</button><span>${B.cart[id]}</span><button onclick="addB(${id},1)">${I('plus')}</button></div></div>`}).join(''):'<p class="mu">Nenhum item no pedido.</p>'}
+ <span class="lb">Pagamento</span>${pays(B.pay,'setBP')}<div class="sep"></div>
+ <div class="row"><span class="mu">Total</span><span class="tot">${R(tot)}</span></div><br>
+ <button class="big" ${tot?'':'disabled'} onclick="fimB()">${I('check')} Finalizar venda</button></div></div>`}
+function addB(id,d){B.cart[id]=(B.cart[id]||0)+d;if(B.cart[id]<=0)delete B.cart[id];bombo()}
+const setBP=p=>{B.pay=p;bombo()};
+function fimB(){let total=0;const l=Object.keys(B.cart).map(id=>{const x=db.itens.find(y=>y.id==id),s=x.preco*B.cart[id];total+=s;return `${B.cart[id]}x ${x.nome} · ${R(s)}`});
+ recibo('bomboniere',l,total,B.pay);B.cart={};bombo()}
+
+boot('bomboniere',bombo);
+</script></body></html>

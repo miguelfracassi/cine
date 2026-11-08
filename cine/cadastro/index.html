@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cadastro · CineVendas</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head><body>
+<header><a class="logo" id="lg"><i></i>CineVendas</a><nav id="nav"></nav></header>
+<main id="app"></main><div id="md"></div>
+<script>var ROOT='../'</script>
+<script src="../assets/app.js"></script>
+<script>
+function cadastro(){tmp.foto=null;const F=tab=='filmes';
+ $('#app').innerHTML=back+`<h1>Cadastro</h1><p class="sub">Gerencie filmes e itens da bomboniere.</p><div class="admin">
+ <div class="side"><button class="${F?'on':''}" onclick="tab='filmes';cadastro()">${I('film')} Filmes</button><button class="${F?'':'on'}" onclick="tab='itens';cadastro()">${I('popcorn')} Bomboniere</button></div>
+ <div><div class="card"><h2>${F?'Cadastrar filme':'Cadastrar item'}</h2>${F?`
+ <span class="lb" style="margin-top:0">Título</span><input id="t" placeholder="Nome do filme">
+ <span class="lb">Foto do filme</span><input type="file" accept="image/*" onchange="foto(this)"><div id="pv"></div>
+ <div class="f2"><div><span class="lb">Classificação</span><select id="c">${['Livre','10','12','14','16','18'].map(x=>`<option>${x}</option>`).join('')}</select></div>
+ <div><span class="lb">Duração (min)</span><input id="d" type="number" min="1" placeholder="120"></div>
+ <div><span class="lb">Preço inteira (R$)</span><input id="p" type="number" min="0" step=".5" placeholder="32" oninput="$('#m').value=(this.value/2).toFixed(2)"></div>
+ <div><span class="lb">Preço meia (R$)</span><input id="m" type="number" min="0" step=".5" placeholder="16"></div></div><br>
+ <button onclick="addF()">${I('plus')} Cadastrar filme</button>`:`
+ <div class="f2"><div><span class="lb" style="margin-top:0">Nome</span><input id="t" placeholder="Pipoca média"></div><div><span class="lb" style="margin-top:0">Preço (R$)</span><input id="p" type="number" min="0" step=".5" placeholder="18"></div></div>
+ <span class="lb">Ícone</span><div class="icp">${ICS.map(i=>`<button class="${i==tmp.ic?'on':''}" onclick="tmp.ic='${i}';document.querySelectorAll('.icp button').forEach(b=>b.classList.remove('on'));this.classList.add('on')">${I(i)}</button>`).join('')}</div>
+ <span class="lb">Ou envie uma foto (opcional)</span><input type="file" accept="image/*" onchange="foto(this)"><div id="pv"></div><br>
+ <button onclick="addI()">${I('plus')} Cadastrar item</button>`}</div>
+ <div class="card"><h2>${F?'Filmes cadastrados':'Itens cadastrados'}</h2>${(F?db.filmes:db.itens).map(x=>`<div class="li"><div class="th">${F?ph(x):x.foto?`<img src="${x.foto}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" alt="">`:I(x.ic||'popcorn')}</div><div><b>${x.titulo||x.nome}</b><br><small>${F?`Classif. ${CL(x.classif)} · ${x.dur} min · ${R(x.preco)} · meia ${R(x.meia)}`:R(x.preco)}</small></div><button class="g" onclick="del('${tab}',${x.id})">${I('trash')}</button></div>`).join('')||'<div class="empty">Nada cadastrado.</div>'}</div></div></div>`}
+function foto(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,360/im.width),c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);tmp.foto=c.toDataURL('image/jpeg',.7);$('#pv').innerHTML=`<img src="${tmp.foto}" style="width:90px;margin-top:8px;border-radius:10px" alt="">`};im.src=r.result};r.readAsDataURL(f)}
+function addF(){const t=$('#t').value.trim(),p=+$('#p').value,m=+$('#m').value,d=+$('#d').value;if(!t||!p||!d)return alert('Preencha título, duração e preço.');
+ db.filmes.push({id:db.seq++,titulo:t,preco:p,meia:m||p/2,classif:$('#c').value,dur:d,foto:tmp.foto,hue:Math.random()*360|0});save();cadastro()}
+function addI(){const t=$('#t').value.trim(),p=+$('#p').value;if(!t||!p)return alert('Preencha nome e preço.');
+ db.itens.push({id:db.seq++,nome:t,preco:p,ic:tmp.ic,foto:tmp.foto});save();cadastro()}
+function del(k,id){db[k]=db[k].filter(x=>x.id!=id);if(V.sel==id)V.sel=null;delete B.cart[id];save();cadastro()}
+
+boot('cadastro',cadastro);
+</script></body></html>

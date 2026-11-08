@@ -1,0 +1,16 @@
+CINEVENDAS - sistema de vendas de cinema (dados ficticios)
+
+PAGINAS (cada uma e um arquivo separado):
+  /            -> index.html
+  /vendas      -> vendas/index.html       (ingressos)
+  /bomboniere  -> bomboniere/index.html   (venda da bomboniere)
+  /cadastro    -> cadastro/index.html     (filmes e itens da bomboniere)
+
+COMO USAR
+  1) Recomendado: execute iniciar.bat (Windows) ou iniciar.sh (Mac/Linux)
+     e abra http://localhost:8000 . Precisa do Python instalado.
+  2) Ou de dois cliques em index.html (funciona, mas alguns navegadores
+     nao compartilham os dados entre paginas abertas por arquivo).
+
+Para publicar: suba a pasta inteira em qualquer hospedagem estatica
+(Netlify, Vercel, GitHub Pages) e os enderecos /bomboniere etc. funcionam.
